@@ -94,7 +94,8 @@ namespace Lab4.Renderer
                 {
                     RenderTitle("Товары в корзине");
                     RenderLine();
-                    RenderProducts(cart.Items.Intersect(category.Products).ToList());
+                    RenderProducts(cart.Items.Where(cartProduct =>
+                        category.Products.Any(categoryProduct => Equals(categoryProduct, cartProduct))).ToList());
                     RenderLine();
                     RenderCalculateCart(cart);
                     RenderLine();
@@ -158,6 +159,7 @@ namespace Lab4.Renderer
                 {
                     RenderProducts(items, selectedIndex);
                 }
+
                 RenderLine();
                 RenderButtonsAnnotate(buttons);
                 RenderLine();
