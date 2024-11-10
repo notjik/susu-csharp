@@ -1,38 +1,32 @@
 ﻿using System;
-
-
+using System.IO;
 
 namespace Lab5
 {
     public abstract class Program
     {
-        public static void Main(string[] args)
+        public static void Main()
         {
-            Schedule schedule = new Schedule();
-            schedule.LoadSchedule("../../schedule.txt");
+            var schedule = new Schedule();
+            string filePath = "../../schedule.txt";
 
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException($"Файл {filePath} не найден.");
+            }
+
+            schedule.LoadSchedule(filePath);
             while (true)
             {
-                Console.WriteLine("Введите название станции (или пустую строку для выхода):");
-                string station = Console.ReadLine();
-                if (string.IsNullOrEmpty(station))
+                var station = ConsoleHandler.ReadLine(schedule.Stations);
+                if (string.IsNullOrWhiteSpace(station))
                     break;
 
-                var nextDepartures = schedule.GetNextDepartures(station);
-                if (nextDepartures.Count > 0)
-                {
-                    Console.WriteLine("Ближайшие отправления:");
-                    foreach (var transport in nextDepartures)
-                    {
-                        Console.WriteLine(transport);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Нет ближайших отправлений с этой станции.");
-                }
+                var currentDateTime = DateTime.Now;
+                var departures = schedule.GetNextDepartures(station, currentDateTime, 10);
+
+                ConsoleHandler.WriteLine(station, departures, currentDateTime);
             }
         }
     }
-
 }
