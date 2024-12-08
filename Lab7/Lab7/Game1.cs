@@ -46,12 +46,12 @@ public class Game1 : Game
         _staticTexture = Content.Load<Texture2D>("staticObject");
         _movingTexture = Content.Load<Texture2D>("movingObject");
 
-        _gameObjects = new List<GameObject>
-        {
+        _gameObjects =
+        [
             new StaticObject(new Vector2(100, 100), _staticTexture),
             new MovingObject(new Vector2(400, 100), _movingTexture, new Vector2(100, 50), GraphicsDevice),
             new PlayerObject(new Vector2(500, 500), _playerTexture, 200, GraphicsDevice)
-        };
+        ];
         
         // Подписки
         foreach (var obj in _gameObjects)
@@ -60,7 +60,7 @@ public class Game1 : Game
             {
                 collidableObj.OnCollision += (sender, other) =>
                 {
-                    Console.WriteLine($"{DateTime.Now}: {sender.GetType().Name} ({sender.GetType().GUID}) collided with {other.GetType().Name} ({other.GetType().GUID})");
+                    Console.WriteLine($"{DateTime.Now}: {sender?.GetType().Name} ({sender?.GetType().GUID}) collided with {other.GetType().Name} ({other.GetType().GUID})");
                 };
             }
         }
@@ -74,18 +74,18 @@ public class Game1 : Game
             Exit();
         }
 
-        for (int i = 0; i < _gameObjects.Count; i++)
+        for (var i = 0; i < _gameObjects.Count; i++)
         {
             var obj = _gameObjects[i];
             obj.Update(gameTime);
 
-            for (int j = i + 1; j < _gameObjects.Count; j++)
+            for (var j = i + 1; j < _gameObjects.Count; j++)
             {
                 var other = _gameObjects[j];
 
-                if (obj is ICollidable collidableObj && other is GameObject gameObject)
+                if (obj is ICollidable collidableObj && other != null)
                 {
-                    collidableObj.CheckCollision(gameObject);
+                    collidableObj.CheckCollision(other);
                 }
             }
         }

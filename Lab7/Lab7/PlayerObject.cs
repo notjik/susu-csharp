@@ -14,8 +14,8 @@ public class PlayerObject(Vector2 position, Texture2D texture, float speed, Grap
     {
         LastPosition = Position;
 
-        KeyboardState state = Keyboard.GetState();
-        Vector2 newPosition = Position;
+        var state = Keyboard.GetState();
+        var newPosition = Position;
 
         if (state.IsKeyDown(Keys.Up) || state.IsKeyDown(Keys.W))
             newPosition.Y -= Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
