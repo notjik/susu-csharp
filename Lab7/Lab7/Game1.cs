@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 
-namespace Lab6;
+namespace Lab7;
 
 public class Game1 : Game
 {
@@ -41,23 +42,30 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        // Загружаем текстуры
         _playerTexture = Content.Load<Texture2D>("playerObject");
         _staticTexture = Content.Load<Texture2D>("staticObject");
         _movingTexture = Content.Load<Texture2D>("movingObject");
 
-        // Создаем игровые объекты
-        _gameObjects =
-        [
+        _gameObjects = new List<GameObject>
+        {
             new StaticObject(new Vector2(100, 100), _staticTexture),
-            new StaticObject(new Vector2(300, 200), _staticTexture),
-
             new MovingObject(new Vector2(400, 100), _movingTexture, new Vector2(100, 50), GraphicsDevice),
-            new MovingObject(new Vector2(200, 300), _movingTexture, new Vector2(-50, 75), GraphicsDevice),
-
             new PlayerObject(new Vector2(500, 500), _playerTexture, 200, GraphicsDevice)
-        ];
+        };
+        
+        // Подписки
+        foreach (var obj in _gameObjects)
+        {
+            if (obj is ICollidable collidableObj)
+            {
+                collidableObj.OnCollision += (sender, other) =>
+                {
+                    Console.WriteLine($"{DateTime.Now}: {sender.GetType().Name} ({sender.GetType().GUID}) collided with {other.GetType().Name} ({other.GetType().GUID})");
+                };
+            }
+        }
     }
+
 
     protected override void Update(GameTime gameTime)
     {
@@ -65,13 +73,29 @@ public class Game1 : Game
         {
             Exit();
         }
-        foreach (var obj in _gameObjects)
+
+        for (int i = 0; i < _gameObjects.Count; i++)
         {
+            var obj = _gameObjects[i];
             obj.Update(gameTime);
+
+            for (int j = i + 1; j < _gameObjects.Count; j++)
+            {
+                var other = _gameObjects[j];
+
+                if (obj is ICollidable collidableObj && other is GameObject gameObject)
+                {
+                    collidableObj.CheckCollision(gameObject);
+                }
+            }
         }
 
         base.Update(gameTime);
     }
+
+
+
+
 
     protected override void Draw(GameTime gameTime)
     {
