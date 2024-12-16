@@ -23,18 +23,18 @@ public class Game1 : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
-    
+
     protected override void Initialize()
     {
         var displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
 
         _graphics.PreferredBackBufferWidth = displayMode.Width;
         _graphics.PreferredBackBufferHeight = displayMode.Height;
-        
+
         _graphics.IsFullScreen = true;
-        
+
         _graphics.ApplyChanges();
-        
+
         base.Initialize();
     }
 
@@ -52,7 +52,7 @@ public class Game1 : Game
             new MovingObject(new Vector2(400, 100), _movingTexture, new Vector2(100, 50), GraphicsDevice),
             new PlayerObject(new Vector2(500, 500), _playerTexture, 200, GraphicsDevice)
         ];
-        
+
         // Подписки
         foreach (var obj in _gameObjects)
         {
@@ -60,7 +60,8 @@ public class Game1 : Game
             {
                 collidableObj.OnCollision += (sender, other) =>
                 {
-                    Console.WriteLine($"{DateTime.Now}: {sender?.GetType().Name} ({sender?.GetType().GUID}) collided with {other.GetType().Name} ({other.GetType().GUID})");
+                    Console.WriteLine(
+                        $"{DateTime.Now}: {sender?.GetType().Name} ({sender?.GetType().GUID}) collided with {other.GetType().Name} ({other.GetType().GUID})");
                 };
             }
         }
@@ -92,9 +93,6 @@ public class Game1 : Game
 
         base.Update(gameTime);
     }
-
-
-
 
 
     protected override void Draw(GameTime gameTime)
